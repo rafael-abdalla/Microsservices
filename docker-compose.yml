@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  catalogodb:
+    image: mongo
+
+  carrinhodb:
+    image: redis:alpine
+
+  descontodb:
+    image: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+
+  catalogo.api:
+    image: ${DOCKER_REGISTRY-}catalogoapi
+    build:
+      context: .
+      dockerfile: Catalogo.Api/Dockerfile
+
+  carrinho.api:
+    image: ${DOCKER_REGISTRY-}carrinhoapi
+    build:
+      context: .
+      dockerfile: Carrinho.Api/Dockerfile
+
+  desconto.api:
+    image: ${DOCKER_REGISTRY-}descontoapi
+    build:
+      context: .
+      dockerfile: Desconto.Api/Dockerfile
+
+volumes:
+  mongo_data:
+  postgres_data:
+  pgadmin_data:

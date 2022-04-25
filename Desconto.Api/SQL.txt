@@ -1,0 +1,5 @@
+CREATE TABLE Cupom (
+Id uuid PRIMARY KEY,
+ProdutoNome VARCHAR(100) NOT NULL,
+Descricao TEXT,
+Valor int);

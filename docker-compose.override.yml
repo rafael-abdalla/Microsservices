@@ -1,0 +1,68 @@
+version: '3.4'
+
+services:
+  catalogodb:
+    container_name: catalogodb
+    restart: always
+    ports:
+      - "27017:27017"  
+    volumes:
+      - mongo_data:/data/db
+
+  carrinhodb:
+    container_name: carrinhodb
+    restart: always
+    ports:
+      - "6379:6379"
+
+  descontodb:
+    container_name: descontodb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=DescontoDb
+    restart: always
+    ports:
+        - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=contato@suporte.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    restart: always
+    ports:
+        - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+  catalogo.api:
+    container_name: catalogo.api
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+     - "DatabaseSettings__ConnectionString=mongodb://catalogodb:27017"
+    depends_on:
+     - catalogodb
+    ports:
+     - "8001:80"
+
+  carrinho.api:
+    container_name: carrinho.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "CacheSettings__ConnectionString=carrinhodb:6379"
+    depends_on:
+     - carrinhodb
+    ports:
+      - "8002:80"
+
+  desconto.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings__ConnectionString=Server=descontodb;Port=5432;Database=DescontoDb;User Id=postgres;Password=postgres"
+    depends_on:
+      - descontodb
+    ports:
+      - "8003:80"
