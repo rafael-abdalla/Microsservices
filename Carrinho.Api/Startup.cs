@@ -1,10 +1,13 @@
+using Carrinho.Api.GrpcServices;
 using Carrinho.Api.Repositories;
+using Desconto.Grpc.Protos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace Carrinho.Api
 {
@@ -26,6 +29,11 @@ namespace Carrinho.Api
             });
 
             services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
+            services.AddScoped<DescontoGrpcService>();
+
+            services.AddGrpcClient<DescontoProtoService.DescontoProtoServiceClient>(
+                options => options.Address = new Uri("http://localhost:5003")
+            );
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

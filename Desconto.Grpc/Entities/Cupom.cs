@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Desconto.Api.Entities
+namespace Desconto.Grpc.Entities
 {
     public class Cupom
     {

@@ -31,7 +31,14 @@ services:
       context: .
       dockerfile: Desconto.Api/Dockerfile
 
+  desconto.grpc:
+    image: ${DOCKER_REGISTRY-}descontogrpc
+    build:
+      context: .
+      dockerfile: Desconto.Grpc/Dockerfile
+
 volumes:
   mongo_data:
   postgres_data:
   pgadmin_data:
+

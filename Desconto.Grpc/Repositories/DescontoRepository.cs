@@ -1,12 +1,11 @@
 ﻿using Dapper;
-using Desconto.Api.Entities;
+using Desconto.Grpc.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Desconto.Api.Repositories
+namespace Desconto.Grpc.Repositories
 {
     public class DescontoRepository : IDescontoRepository
     {
@@ -66,8 +65,7 @@ namespace Desconto.Api.Repositories
             NpgsqlConnection conexao = ObterConexaoPostgreSQL();
 
             var cupom = await conexao.QueryFirstOrDefaultAsync<Cupom>(
-                @"SELECT id, produtonome, descricao, valor
-                FROM Cupom WHERE ProdutoNome=@ProdutoNome",
+                "SELECT * FROM Cupom WHERE ProdutoNome=@ProdutoNome",
                 new { ProdutoNome = nome });
 
             if (cupom == null)
@@ -76,14 +74,6 @@ namespace Desconto.Api.Repositories
             }
 
             return cupom;
-        }
-
-        public async Task<IEnumerable<Cupom>> ObterTodos()
-        {
-            NpgsqlConnection conexao = ObterConexaoPostgreSQL();
-
-            return await conexao.QueryAsync<Cupom>(
-                "SELECT id, produtonome, descricao, valor FROM Cupom");
         }
     }
 }

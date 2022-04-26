@@ -53,12 +53,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings__ConnectionString=carrinhodb:6379"
+      - "GrpcSettings__DescontoUrl=desconto.grpc"
     depends_on:
      - carrinhodb
     ports:
       - "8002:80"
 
   desconto.api:
+    container_name: desconto.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings__ConnectionString=Server=descontodb;Port=5432;Database=DescontoDb;User Id=postgres;Password=postgres"
@@ -66,3 +68,13 @@ services:
       - descontodb
     ports:
       - "8003:80"
+
+  desconto.grpc:
+    container_name: desconto.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings__ConnectionString=Server=descontodb;Port=5432;Database=DescontoDb;User Id=postgres;Password=postgres"
+    depends_on:
+      - descontodb
+    ports:
+      - "8004:80"

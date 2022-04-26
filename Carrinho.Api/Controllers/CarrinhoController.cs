@@ -1,4 +1,5 @@
 ﻿using Carrinho.Api.Entities;
+using Carrinho.Api.GrpcServices;
 using Carrinho.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,11 +12,13 @@ namespace Carrinho.Api.Controllers
     public class CarrinhoController : ControllerBase
     {
         private readonly ICarrinhoRepository _repository;
+        private readonly DescontoGrpcService _descontoGrpcService;
 
-        public CarrinhoController(ICarrinhoRepository repository)
+        public CarrinhoController(ICarrinhoRepository repository, DescontoGrpcService descontoGrpcService)
         {
             _repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
+            _descontoGrpcService = descontoGrpcService;
         }
 
         [HttpGet("{usuarioNome}", Name = "ObterCarrinho")]
@@ -29,6 +32,12 @@ namespace Carrinho.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<CarrinhoCompra>> Atualizar([FromBody] CarrinhoCompra carrinho)
         {
+            foreach(var item in carrinho.Itens)
+            {
+                var cupom = await _descontoGrpcService.ObterDesconto(item.ProdutoNome);
+                item.Preco -= (item.Preco * (cupom.Valor / 100));
+            }
+
             return Ok(await _repository.Atualizar(carrinho));
         }
 

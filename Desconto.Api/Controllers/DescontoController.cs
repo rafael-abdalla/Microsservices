@@ -1,9 +1,6 @@
 ﻿using Desconto.Api.Entities;
 using Desconto.Api.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +15,19 @@ namespace Desconto.Api.Controllers
         public DescontoController(IDescontoRepository repository)
         {
             _repository = repository;
+        }
+
+        [HttpGet(Name = "ObterTodos")]
+        public async Task<ActionResult<Cupom>> ObterTodos()
+        {
+            var cupons = await _repository.ObterTodos();
+
+            if (cupons.Count() == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(cupons);
         }
 
         [HttpGet("{produtoNome}", Name = "ObterDesconto")]
